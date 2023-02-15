@@ -27,7 +27,7 @@
                 emit-value
                 map-options/>
               <q-select class="q-ml-xs col-xs-5 col-sm-2" outlined dense label="Ver por" stack-label
-                @update:model-value="gestionarVerPor()"
+                @update:model-value="(value) => gestionarVerPor(value)"
                 v-model="filterRecord.verPor"
                 :options="['Por días', 'Por Servicios']"/>
           </div>
@@ -60,7 +60,7 @@ export default {
   props: ['value', 'id', 'keyValue'], // se pasan como parametro desde mainTabs. value = { registrosSeleccionados: [], filterRecord: {} }
   data () {
     return {
-      verPorDias: false,
+      verPorDias: true,
       expanded: false,
       refreshKey: 0,
       visible: '',
@@ -75,9 +75,9 @@ export default {
     ...mapState('login', ['user']) // importo state.user desde store-login
   },
   methods: {
-    gestionarVerPor () {
-      if (this.filterRecord.verPor === 'Por días') this.verPorDias = true
-      else this.verPorDias = false
+    gestionarVerPor(value) {
+      if (value === "Por días") this.verPorDias = true;
+      else this.verPorDias = false;
     },
     cargaMesesAnyos () {
       for (let i = 1; i <= 12; i++) {
@@ -90,7 +90,7 @@ export default {
       }
     },
     getRecords () {
-      this.filterRecord.verPor = 'Por Servicios'
+      this.filterRecord.verPor = "Por días"
       this.refreshKey++
       this.expanded = false
     }
