@@ -25,7 +25,7 @@
         clearable
         label="Fecha Entrada Desde"
         stack-label
-        :value="formatDate(filterR.fechaEntradaDesde)"
+        :model-value="formatDate(filterR.fechaEntradaDesde)"
         @update:model-value="(val) => filterR.fechaEntradaDesde=val"
       >
         <template v-slot:append>
@@ -43,7 +43,7 @@
         clearable
         label="Fecha Entrada Hasta"
         stack-label
-        :value="formatDate(filterR.fechaEntradaHasta)"
+        :model-value="formatDate(filterR.fechaEntradaHasta)"
         @update:model-value="(val) => filterR.fechaEntradaHasta=val"
       >
         <template v-slot:append>
@@ -97,7 +97,7 @@
         clearable
         label="Fecha Factura Desde"
         stack-label
-        :value="formatDate(filterR.fechaFacturaDesde)"
+        :model-value="formatDate(filterR.fechaFacturaDesde)"
         @update:model-value="(val) => filterR.fechaFacturaDesde=val"
         class="q-mb-sm"
       >
@@ -116,7 +116,7 @@
         clearable
         label="Fecha Factura Hasta"
         stack-label
-        :value="formatDate(filterR.fechaFacturaHasta)"
+        :model-value="formatDate(filterR.fechaFacturaHasta)"
         @update:model-value="(val) => filterR.fechaFacturaHasta=val"
       >
         <template v-slot:append>

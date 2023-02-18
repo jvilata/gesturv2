@@ -38,7 +38,7 @@
       </q-input>
       <q-input
         outlined
-        :rules="[val => !!val || 'Campo requerido']"
+        :rules="[val => formatDateInv(val) > filterR.fechaEntrada || 'La fecha salida debe ser mayor que entrada']"
         clearable
         label="Fecha Salida"
         stack-label
@@ -123,6 +123,9 @@ export default {
     },
     formatDate (pdate) {
       return date.formatDate(pdate, 'DD-MM-YYYY')
+    },
+    formatDateInv(pdate) {
+      return date.formatDate(pdate, 'YYYY-MM-DD')
     }
   },
   components: {
