@@ -139,7 +139,7 @@ export default {
   },
   methods: {
     ...mapActions('tabs', ['addTab']),
-    ...mapActions('estancias', ['findLinEstancias', 'borrarReserva', 'addReserva']),
+    ...mapActions('estancias', ['findEstancia', 'findLinEstancias', 'borrarReserva', 'addReserva']),
     ...mapActions('servicios', ['loadListaServiciosMut']),
     getRecords () {
       var objFilter = { idEstancia: this.value.id }
@@ -216,13 +216,31 @@ export default {
       this.$emit('calculaTotalesEst', obj)
     },
     saveRecord (record) {
-      this.mostrarDialog = false
-      var index = this.registrosSeleccionados.findIndex(function (sel) {
-        // busco elemento del array con este id
-        if (sel.id === record.id) return true
-      })
-      Object.assign(this.registrosSeleccionados[index], record)
-      this.updateRecord(record)
+      var objFilter = {
+        fechaEntradaDesde: record.fechaInicio,
+        fechaEntradaHasta: record.fechaFin,
+        tipoServicio: record.idServicio
+      }
+      this.findEstancia(objFilter) // busca estancias entre esas fechas para no solapar
+        .then(response => {
+          var estanciasEnc = response.data
+          estanciasEnc = estanciasEnc.filter(r => r.tipoEstancia !== 5 && r.id !== record.idEstancia)
+          if (estanciasEnc.length > 0) {
+            var str = estanciasEnc.reduce((a, r) => a + '{' + r.id + ' ' + r.nombre + ' ' + r.fechaEntrada.substring(0,10) + '} ', '')
+            this.$q.dialog({ title: 'Error', message: 'Hay solape con ' + str })
+          } else { // todo bien
+            this.mostrarDialog = false
+            var index = this.registrosSeleccionados.findIndex(function (sel) {
+              // busco elemento del array con este id
+              if (sel.id === record.id) return true
+            })
+            Object.assign(this.registrosSeleccionados[index], record)
+            this.updateRecord(record)
+          }
+        })
+        .catch(error => {
+          this.$q.dialog({ title: 'Error', message: error })
+        })       
     },
     editRecord (rowChanges) {
       Object.assign(this.registroEditado, rowChanges)
