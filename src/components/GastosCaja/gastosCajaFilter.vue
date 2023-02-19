@@ -5,28 +5,10 @@
     </q-card-section>
 
     <q-form @submit="getRecords" class="q-gutter-y-xs">
-      <q-input outlined clearable label="Desde - Fecha" stack-label :model-value="formatDate(filterR.fechaInicio)" @update:model-value="val => filterR.fechaInicio=val" >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="fechaInicio">
-                <wgDate
-                  v-model="filterR.fechaInicio"
-                  @update:model-value="$refs.fechaInicio.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
-      <q-input outlined clearable label="Hasta - Fecha" stack-label :model-value="formatDate(filterR.fechaFin)" @update:model-value="val => filterR.fechaFin=val" >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="fechaFin">
-                <wgDate
-                  v-model="filterR.fechaFin"
-                  @update:model-value="$refs.fechaFin.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+      <q-input outlined clearable label="Desde - Fecha" stack-label 
+        v-model="filterR.fechaInicio" type="date" />
+      <q-input outlined clearable label="Hasta - Fecha" stack-label
+        v-model="filterR.fechaFin" type="date" />
       <q-input outlined clearable label="Descripción" stack-label v-model="filterR.descripcion" />
       <q-card-actions align="right">
         <q-btn  flat type="submit" label="Buscar" color="primary"/>
@@ -38,7 +20,6 @@
 
 <script>
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['value'], // value es el objeto con los campos de filtro que le pasa accionesMain con v-model
   data () {
@@ -57,9 +38,6 @@ export default {
     formatDate (pdate) {
       return date.formatDate(pdate, 'DD-MM-YYYY')
     }
-  },
-  components: {
-    wgDate: wgDate
   },
   mounted () {
     this.filterR = Object.assign({}, this.value) // asignamos valor del parametro por si viene de otro tab

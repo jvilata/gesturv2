@@ -85,8 +85,13 @@
                   emit-value
                   map-options
                 />
-                <wgDate v-if="['fecha'].includes(col.name)"
-                  v-model="scope.value" />
+                <q-input
+                  v-if="['fecha'].includes(col.name)"
+                  type="date"
+                  :model-value="scope.value.substring(0,10)"
+                  @update:model-value="v=>scope.value=v + ' 00:00:00'"
+                  dense
+                  autofocus/>
             </q-popup-edit>
            </q-td>
         </q-tr>
@@ -130,7 +135,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['value'], // en 'value' tenemos el filtro
   data () {
@@ -152,9 +156,6 @@ export default {
   computed: {
     ...mapState('login', ['user']),
     ...mapState('tablasAux', ['listaTiposGasto', 'listaSINO'])
-  },
-  components: {
-    wgDate: wgDate
   },
   methods: {
     ...mapActions('tabs', ['addTab']),

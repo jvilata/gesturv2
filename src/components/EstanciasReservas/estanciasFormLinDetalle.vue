@@ -22,7 +22,7 @@
             emit-value
             map-options
             @filter="filterServicios"
-            @blur="rellenarDatosServicio"
+            @blur="rellenarDatosServicio(true)"
             use-input
             hide-selected
             fill-input
@@ -45,28 +45,10 @@
           <q-input class="col-xs-3 col-sm-2" outlined label="Número" stack-label v-model="recordToSubmit.Numero" />
         </div>
         <div class="row">
-          <q-input label="Fecha Inicio" class="col-xs-12 col-sm-5" clearable outlined stack-label :model-value="formatDate(recordToSubmit.fechaInicio)" @blur="calcularFechaFin">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaIni">
-                  <wgDate
-                      @update:model-value="$refs.fechaIni.hide()"
-                      v-model="recordToSubmit.fechaInicio" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
-          <q-input label="Fecha Fin" class="col-xs-12 col-sm-5" clearable outlined stack-label :model-value="formatDate(recordToSubmit.fechaFin)" @blur="calcularNoches(recordToSubmit.fechaFin, recordToSubmit.fechaInicio)">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaFin">
-                  <wgDate
-                      @update:model-value="$refs.fechaFin.hide()"
-                      v-model="recordToSubmit.fechaFin" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
+          <q-input label="Fecha Inicio" class="col-xs-12 col-sm-5" clearable outlined stack-label
+            v-model="recordToSubmit.fechaInicio" type="date" @blur="calcularFechaFin" />
+          <q-input label="Fecha Fin" class="col-xs-12 col-sm-5" clearable outlined stack-label
+            v-model="recordToSubmit.fechaFin" type="date" @blur="calcularNoches(recordToSubmit.fechaFin, recordToSubmit.fechaInicio)" />
           <q-input class="col-xs-4 col-sm-2" outlined label="Noches" stack-label v-model="recordToSubmit.noches" />
           <q-input class="col-xs-4 col-sm-3" outlined stack-label v-model="recordToSubmit.cantidad" label="Cantidad" @blur="calcularTotal"/>
           <q-input class="col-xs-4 col-sm-3" outlined stack-label v-model="recordToSubmit.tarifa" label="Tarifa" @blur="calcularTotal"/>
@@ -107,7 +89,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['value', 'cabecera'], // value es el objeto con los campos de filtro que le pasa accionesMain con v-model
   data () {
@@ -133,7 +114,7 @@ export default {
       })
     },
     saveForm () {
-      this.rellenarDatosServicio()
+      this.rellenarDatosServicio(false) // no recalcular tarifa
         .then(
           this.$emit('saveRecord', this.recordToSubmit)
         )
@@ -153,7 +134,7 @@ export default {
       this.recordToSubmit.noches = diff
       this.calcularTotal()
     },
-    rellenarDatosServicio () {
+    rellenarDatosServicio (recalcular) { // recalcular tarifa
       return new Promise((resolve, reject) => {
         const servicio = this.listaServicios.find(serv => serv.id === this.recordToSubmit.idServicio)
         this.recordToSubmit.tipoIva = servicio.tipoIva
@@ -165,7 +146,7 @@ export default {
         }
         this.calcularTarifa(record)
           .then(response => {
-            this.recordToSubmit.tarifa = response.data[0].tarifa
+            if (recalcular) this.recordToSubmit.tarifa = response.data[0].tarifa
             this.calcularTotal()
           })
           .catch(error => {
@@ -193,14 +174,14 @@ export default {
       Object.assign(this.recordToSubmit, obj)
     }
   },
-  components: {
-    wgDate: wgDate
-  },
   mounted () {
     if (this.listaServicios.length === 0) {
       this.loadListaServiciosMut()
     }
     this.recordToSubmit = Object.assign({}, this.value) // asignamos valor del parametro por si viene de otro tab
+    if (this.recordToSubmit.fechaInicio) this.recordToSubmit.fechaInicio = this.recordToSubmit.fechaInicio.substring(0,10)
+    if (this.recordToSubmit.fechaFin) this.recordToSubmit.fechaFin = this.recordToSubmit.fechaFin.substring(0,10)
+
     this.calcularNoches(this.recordToSubmit.fechaFin, this.recordToSubmit.fechaInicio)
     this.listaServiciosFilter = this.listaServicios
   }

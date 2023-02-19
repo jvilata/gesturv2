@@ -59,15 +59,13 @@
                 v-model="scope.value"
                 dense
                 autofocus/>
-              <!--q-input
-                v-if="['FechaExp', 'FechaNac'].includes(col.name)"
-                type="text"
-                :model-value="formatDate(scope.value)"
-                @update:model-value="v=>scope.value=v"
+              <q-input
+                v-if="['FechaEntrada', 'FechaExp', 'FechaNac'].includes(col.name)"
+                type="date"
+                :model-value="scope.value.substring(0,10)"
+                @update:model-value="v=>scope.value=v + ' 00:00:00'"
                 dense
-                autofocus/-->
-              <wgDate v-if="['FechaEntrada', 'FechaExp', 'FechaNac'].includes(col.name)"
-                v-model="scope.value"/>
+                autofocus/>
               <q-select
                 v-if="['sexo'].includes(col.name)"
                 outlined
@@ -125,7 +123,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 
 export default {
   props: ['value'], // en 'value' tenemos la tabla de datos del grid
@@ -225,6 +222,7 @@ export default {
       })
     },
     updateRecord (record) { // Volvemos a llamar a addServicios con el contenido de props.row
+      console.log('upd', record)
       this.addViajero(record)
         .then(response => {
           this.refresh++
@@ -233,9 +231,6 @@ export default {
           this.$q.dialog({ title: 'Error', message: error })
         })
     }
-  },
-  components: {
-    wgDate: wgDate
   },
   mounted () {
     this.getRecords()

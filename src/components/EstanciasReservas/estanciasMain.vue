@@ -68,7 +68,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.tabs)
     if (Object.keys(this.tabs['estanciasMain-1'].meta.value).length > 0) {
       this.getRecords(this.tabs['estanciasMain-1'].meta.value)
     } else { // es la primera vez que entro, cargo valores po defecto

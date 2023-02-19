@@ -37,7 +37,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 import { openBlobFile } from 'components/General/cordova.js'
 
 export default {
@@ -58,9 +57,6 @@ export default {
   },
   computed: {
     ...mapState('login', ['user'])
-  },
-  components: {
-    wgDate: wgDate
   },
   methods: {
     ...mapActions('guardiaC', ['generarArchivoGC']),

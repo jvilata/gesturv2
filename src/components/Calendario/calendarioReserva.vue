@@ -23,38 +23,18 @@
         clearable
         label="Fecha Entrada"
         stack-label
-        :model-value="formatDate(filterR.fechaEntrada)"
-        @update:model-value="(val) => filterR.fechaEntrada=val"
-      >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="qProxy1">
-                <wgDate
-                  v-model="filterR.fechaEntrada"
-                  @update:model-value="$refs.qProxy1.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+        v-model= "filterR.fechaEntrada"
+        type="date"
+      />
       <q-input
         outlined
-        :rules="[val => formatDateInv(val) > filterR.fechaEntrada || 'La fecha salida debe ser mayor que entrada']"
+        :rules="[val => val > filterR.fechaEntrada || 'La fecha salida debe ser mayor que entrada']"
         clearable
         label="Fecha Salida"
         stack-label
-        :model-value="formatDate(filterR.fechaSalida)"
-        @update:model-value="(val) => filterR.fechaSalida=val"
-      >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="qProxy">
-                <wgDate
-                  v-model="filterR.fechaSalida"
-                  @update:model-value="$refs.qProxy.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+        v-model= "filterR.fechaSalida"
+        type="date"
+      />
       <q-input outlined clearable autofocus label="Cliente" stack-label v-model="filterR.cliente"  :rules="[val => !!val || 'Campo requerido']"/>
       <q-input outlined clearable autofocus label="Teléfono" stack-label v-model="filterR.telefono"/>
       <q-input outlined clearable autofocus label="Importe Ingresado" stack-label v-model="filterR.ingresado"/>
@@ -73,7 +53,6 @@
 <script>
 import { date } from 'quasar'
 import { mapState } from 'vuex'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['value'], // value es el objeto con los campos de filtro que le pasa accionesMain con v-model
   data () {
@@ -125,14 +104,14 @@ export default {
       return date.formatDate(pdate, 'DD-MM-YYYY')
     },
     formatDateInv(pdate) {
-      return date.formatDate(pdate, 'YYYY-MM-DD')
+      console.log(pdate)
+      return pdate.substring(6,10)+'-'+pdate.substring(3,5)+'-'+pdate.substring(0,2)
     }
-  },
-  components: {
-    wgDate: wgDate
   },
   mounted () {
     this.filterR = Object.assign({}, this.value) // asignamos valor del parametro por si viene de otro tab
+    this.filterR.fechaEntrada = this.filterR.fechaEntrada.substring(0,10)
+    this.filterR.fechaSalida = this.filterR.fechaSalida.substring(0,10)
   }
 }
 </script>

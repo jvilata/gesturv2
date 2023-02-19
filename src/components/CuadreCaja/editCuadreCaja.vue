@@ -8,28 +8,10 @@
       </q-card-section>
       <q-card-section>
         <div class="row">
-          <q-input label="Fecha Inicio" class="col-xs-12 col-sm-5" clearable outlined stack-label :model-value="formatDate(recordToSubmit.fechaInicial)"  @update:model-value="(val) => recordToSubmit.fechaInicial=val">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaInicial">
-                  <wgDate
-                      @update:model-value="$refs.fechaInicial.hide()"
-                      v-model="recordToSubmit.fechaInicial" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
-          <q-input label="Fecha Fin" class="col-xs-12 col-sm-5" clearable outlined stack-label :model-value="formatDate(recordToSubmit.fechaCierre)"  @update:model-value="(val) => recordToSubmit.fechaCierre=val">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaCierre">
-                  <wgDate
-                      @update:model-value="$refs.fechaCierre.hide()"
-                      v-model="recordToSubmit.fechaCierre" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
+          <q-input label="Fecha Inicio" class="col-xs-12 col-sm-5" clearable outlined stack-label
+            v-model="recordToSubmit.fechaInicial" type="date" />
+          <q-input label="Fecha Fin" class="col-xs-12 col-sm-5" clearable outlined stack-label
+            v-model="recordToSubmit.fechaCierre" type="date" />
           <q-btn outline class="col-xs-4 col-sm-2" color="primary" label="Calcular" @click="calcular" :disabled="recordToSubmit.fechaInicial == null || recordToSubmit.fechaCierre == null ? !disabledCalc : disabledCalc" />
         </div>
         <div class="row q-mt-md q-mb-md">
@@ -54,7 +36,6 @@
 <script>
 import { date } from 'quasar'
 import { mapActions } from 'vuex'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['value', 'cabecera'], // value es el objeto con los campos de filtro que le pasa accionesMain con v-model
   data () {
@@ -75,6 +56,8 @@ export default {
   },
   mounted () {
     Object.assign(this.recordToSubmit, this.value)
+    this.recordToSubmit.fechaInicial = this.recordToSubmit.fechaInicial.substring(0,10)
+    this.recordToSubmit.fechaCierre = this.recordToSubmit.fechaCierre.substring(0,10)
   },
   methods: {
     ...mapActions('cuadrecaja', ['calcularCierre']),
@@ -96,9 +79,6 @@ export default {
           this.$q.dialog({ title: 'Error', message: error })
         })
     }
-  },
-  components: {
-    wgDate: wgDate
   }
 }
 </script>
