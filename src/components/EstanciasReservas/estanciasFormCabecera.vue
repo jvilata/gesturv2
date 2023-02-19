@@ -63,38 +63,18 @@
           clearable
           outlined
           stack-label
-          :model-value="formatDate(recordToSubmit.fechaEntrada)"
-          @update:model-value="v=>recordToSubmit.fechaEntrada=v"
-          >
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy ref="fechaEntrada">
-                <wgDate
-                    @update:model-value="$refs.fechaEntrada.hide()"
-                    v-model="recordToSubmit.fechaEntrada" />
-            </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
+          v-model="recordToSubmit.fechaEntrada"
+          type="date"
+        />
         <q-input
           label="Fecha Salida"
           class="col-xs-6 col-sm-3"
           clearable
           outlined
           stack-label
-          :model-value="formatDate(recordToSubmit.fechaSalida)"
-          @update:model-value="v=>recordToSubmit.fechaSalida=v"
-          >
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy ref="fechaSalida">
-                <wgDate
-                    @update:model-value="$refs.fechaSalida.hide()"
-                    v-model="recordToSubmit.fechaSalida" />
-            </q-popup-proxy>
-            </q-icon>
-        </template>
-        </q-input>
+          v-model="recordToSubmit.fechaSalida"
+          type="date"
+        />
         <q-input class="col-xs-4 col-sm-2"  outlined label="N.Viajeros" stack-label v-model="recordToSubmit.numViajeros" />
         <q-input class="col-xs-8 col-sm-4"  outlined label="Observaciones" stack-label v-model="recordToSubmit.observaciones" />
       </div>
@@ -117,19 +97,9 @@
             clearable
             outlined
             stack-label
-            :model-value="formatDate(recordToSubmit.FechaFactura)"
-            @update:model-value="(val) => recordToSubmit.FechaFactura=val"
-            >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="FechaFactura">
-                  <wgDate
-                      @update:model-value="$refs.FechaFactura.hide()"
-                      v-model="recordToSubmit.FechaFactura" />
-              </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+            v-model="recordToSubmit.FechaFactura"
+            type="date"
+          />
         <q-input class="col-xs-6 col-sm-2" outlined label="Número Factura" stack-label v-model="recordToSubmit.NroFactura" />
       </div>
   </q-card>
@@ -138,7 +108,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 
 export default {
   props: ['value'], // value es el objeto con los campos de filtro que le pasa accionesMain con v-model
@@ -153,9 +122,6 @@ export default {
     ...mapState('login', ['user']),
     ...mapState('clientes', ['listaClientes']),
     ...mapState('tablasAux', ['listaTipoEstancia', 'listaTipoTarifa'])
-  },
-  components: {
-    wgDate: wgDate
   },
   methods: {
     ...mapActions('estancias', ['generarFactura', 'findEstancia']),
@@ -183,6 +149,10 @@ export default {
             this.findEstancia({ id: this.recordToSubmit.id })
               .then(response => {
                 Object.assign(this.recordToSubmit, response.data[0])
+                if (this.recordToSubmit.fechaEntrada) this.recordToSubmit.fechaEntrada = this.recordToSubmit.fechaEntrada.substring(0,10)
+                if (this.recordToSubmit.fechaSalida) this.recordToSubmit.fechaSalida = this.recordToSubmit.fechaSalida.substring(0,10)
+                if (this.recordToSubmit.FechaFactura) this.recordToSubmit.FechaFactura = this.recordToSubmit.FechaFactura.substring(0,10)
+
               })
               .catch(error => {
                 this.$q.dialog({ title: 'Error', message: error })
@@ -207,6 +177,9 @@ export default {
     this.listaClientesFilter = this.listaClientes
     this.listaTipoEstanciaFilter = this.listaTipoEstancia
     this.recordToSubmit = Object.assign({}, this.value)
+    if (this.recordToSubmit.fechaEntrada) this.recordToSubmit.fechaEntrada = this.recordToSubmit.fechaEntrada.substring(0,10)
+    if (this.recordToSubmit.fechaSalida) this.recordToSubmit.fechaSalida = this.recordToSubmit.fechaSalida.substring(0,10)
+    if (this.recordToSubmit.FechaFactura) this.recordToSubmit.FechaFactura = this.recordToSubmit.FechaFactura.substring(0,10)
   },
   watch: {
     recordToSubmit: { // detecta cambios en las propiedades de este objeto (tienen que estar inicializadas en data())

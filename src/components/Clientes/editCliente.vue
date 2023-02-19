@@ -53,48 +53,15 @@
         />
           <q-input outlined clearable label="DNI/Pasaporte" v-model="cliente.nroDoc" class="col-xs-7 col-sm-4"/>
           <q-input label="Fecha Nacimiento" class="col-xs-7 col-sm-3" clearable outlined stack-label
-            :model-value="formatDate(cliente.fechaNacimiento)"
-            @update:model-value="v=>{cliente.fechaNacimiento=v}">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaNac">
-                  <wgDate
-                      @update:model-value="$refs.fechaNac.hide()"
-                      v-model="cliente.fechaNacimiento" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
+            v-model="cliente.fechaNacimiento" type="date"/>
           <q-input outlined clearable label="Nacionalidad" v-model="cliente.nacionalidad" class="col-xs-5 col-sm-3" />
         </div>
         <div class="row q-mb-sm">
           <q-input label="Fecha Expedición" class="col-xs-6 col-sm-6" clearable outlined stack-label
-            :model-value="formatDate(cliente.fechaExpedicion)"
-            @update:model-value="v=>cliente.fechaExpedicion=v"
-            @blur="cambiaDatosExpedicion(cliente.fechaExpedicion)">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaExp">
-                  <wgDate
-                      @update:model-value="$refs.fechaExp.hide()"
-                      v-model="cliente.fechaExpedicion" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
+            v-model="cliente.fechaExpedicion" type="date"
+            @blur="cambiaDatosExpedicion(cliente.fechaExpedicion)" />
            <q-input label="Fecha Validez" class="col-xs-6 col-sm-6" clearable outlined stack-label
-            :model-value="formatDate(cliente.fechaValidez)"
-            @update:model-value="v=>cliente.fechaValidez=v">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="fechaVal">
-                  <wgDate
-                      @update:model-value="$refs.fechaVal.hide()"
-                      v-model="cliente.fechaValidez" />
-              </q-popup-proxy>
-              </q-icon>
-          </template>
-          </q-input>
+            v-model="cliente.fechaValidez" type="date"/>
         </div>
         <div class="row q-mb-sm">
           <q-expansion-item
@@ -163,7 +130,6 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['id'],
   data () {
@@ -229,11 +195,13 @@ export default {
     this.loadDetallecliente(this.tabs[this.id].meta.value.id)
       .then(response => {
         this.cliente = response.data[0]
+        this.cliente.fechaNacimiento = this.cliente.fechaNacimiento.substring(0,10)
+        this.cliente.fechaValidez = this.cliente.fechaValidez.substring(0,10)
+        this.cliente.fechaExpedicion = this.cliente.fechaExpedicion.substring(0,10)
         setTimeout(() => { this.colorBotonSave = 'primary'; this.hasChanges = false }, 50) // dejo pasar un poco porque en el render se modifica el registro
       })
       .catch(error => {
-        this.$q.dialog({ title: 'Error', message: error.response.statusText })
-        this.desconectarLogin()
+        this.$q.dialog({ title: 'Error', message: error.message })
       })
   },
   unmounted () {
@@ -241,9 +209,6 @@ export default {
       this.$q.dialog({ title: 'Aviso', message: '¿ Desea guardar cambios ?', ok: true, cancel: true, persistent: true })
         .onOk(() => { this.guardarCliente() })
     }
-  },
-  components: {
-    wgDate: wgDate
   }
 }
 </script>

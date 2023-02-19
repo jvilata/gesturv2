@@ -25,37 +25,17 @@
         clearable
         label="Fecha Entrada Desde"
         stack-label
-        :model-value="formatDate(filterR.fechaEntradaDesde)"
-        @update:model-value="(val) => filterR.fechaEntradaDesde=val"
-      >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="qProxy1">
-                <wgDate
-                  v-model="filterR.fechaEntradaDesde"
-                  @update:model-value="$refs.qProxy1.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+        v-model="filterR.fechaEntradaDesde"
+        type="date"
+      />
       <q-input
         outlined
         clearable
         label="Fecha Entrada Hasta"
         stack-label
-        :model-value="formatDate(filterR.fechaEntradaHasta)"
-        @update:model-value="(val) => filterR.fechaEntradaHasta=val"
-      >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="qProxy">
-                <wgDate
-                  v-model="filterR.fechaEntradaHasta"
-                  @update:model-value="$refs.qProxy.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+        v-model="filterR.fechaEntradaHasta"
+        type="date"
+      />
       <q-select outlined clearable label="Tipo Servicio" stack-label
           v-model="filterR.tipoServicio"
           :options="listaServicios"
@@ -97,38 +77,18 @@
         clearable
         label="Fecha Factura Desde"
         stack-label
-        :model-value="formatDate(filterR.fechaFacturaDesde)"
-        @update:model-value="(val) => filterR.fechaFacturaDesde=val"
+        v-model="filterR.fechaFacturaDesde"
+        type="date"
         class="q-mb-sm"
-      >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="fechaFacturaDesde">
-                <wgDate
-                  v-model="filterR.fechaFacturaDesde"
-                  @update:model-value="$refs.fechaFacturaDesde.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+      />
       <q-input
         outlined
         clearable
         label="Fecha Factura Hasta"
         stack-label
-        :model-value="formatDate(filterR.fechaFacturaHasta)"
-        @update:model-value="(val) => filterR.fechaFacturaHasta=val"
-      >
-        <template v-slot:append>
-            <q-icon name="event" class="cursos-pointer">
-              <q-popup-proxy ref="fechaFacturaHasta">
-                <wgDate
-                  v-model="filterR.fechaFacturaHasta"
-                  @update:model-value="$refs.fechaFacturaHasta.hide()"/>
-              </q-popup-proxy>
-            </q-icon>
-        </template>
-      </q-input>
+        v-model="filterR.fechaFacturaHasta"
+        type="date"
+      />
     </q-banner>
       <q-card-actions align="right">
         <q-btn flat type="submit" label="Buscar" color="primary"/>
@@ -141,7 +101,6 @@
 <script>
 import { mapState } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 export default {
   props: ['value'], // value es el objeto con los campos de filtro que le pasa accionesMain con v-model
   data () {
@@ -172,9 +131,6 @@ export default {
     formatDate (pdate) {
       return date.formatDate(pdate, 'DD-MM-YYYY')
     }
-  },
-  components: {
-    wgDate: wgDate
   },
   mounted () {
     this.filterR = Object.assign({}, this.value) // asignamos valor del parametro por si viene de otro tab

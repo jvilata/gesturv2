@@ -44,38 +44,18 @@
             clearable
             outlined
             stack-label
-            :model-value="formatDate(recordToSubmit.FechaInicialEntrada)"
-            @update:model-value="(val) => recordToSubmit.FechaInicialEntrada=val"
-            >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="FechaInicialEntrada">
-                  <wgDate
-                      @update:model-value="$refs.FechaInicialEntrada.hide()"
-                      v-model="recordToSubmit.FechaInicialEntrada" />
-              </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+            v-model="recordToSubmit.FechaInicialEntrada"
+            type="date"
+          />
           <q-input
             label="Fecha Final"
             class="col-xs-6 col-sm-4"
             clearable
             outlined
             stack-label
-            :model-value="formatDate(recordToSubmit.FechaFinalEntrada)"
-            @update:model-value="(val) => recordToSubmit.FechaFinalEntrada=val"
-            >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy ref="FechaFinalEntrada">
-                  <wgDate
-                      @update:model-value="$refs.FechaFinalEntrada.hide()"
-                      v-model="recordToSubmit.FechaFinalEntrada" />
-              </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+            v-model="recordToSubmit.FechaFinalEntrada"
+            type="date"
+          />
           <q-btn outline class="col-xs-12 col-sm-4" color="primary" label="Generar Lista" @click="generarListaGC"/>
       </div>
     <q-card flat class="q-pb-xl">
@@ -109,7 +89,6 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { date } from 'quasar'
-import wgDate from 'components/General/wgDate.vue'
 
 export default {
   props: ['value', 'id', 'keyValue'], // se pasan como parametro desde mainTabs. value = { registrosSeleccionados: [], filterRecord: {} }
@@ -182,17 +161,16 @@ export default {
   mounted () {
     this.getRecordsTipo1({})
     if (this.recordToSubmit.FechaInicialEntrada === '') {
-      this.recordToSubmit.FechaInicialEntrada = date.formatDate(new Date(), 'YYYY-MM-DD 00:00:00')
+      this.recordToSubmit.FechaInicialEntrada = date.formatDate(new Date(), 'YYYY-MM-DD')
     }
     if (this.recordToSubmit.FechaFinalEntrada === '') {
-      this.recordToSubmit.FechaFinalEntrada = date.formatDate(new Date(), 'YYYY-MM-DD 00:00:00')
+      this.recordToSubmit.FechaFinalEntrada = date.formatDate(new Date(), 'YYYY-MM-DD')
     }
   },
   unmounted () {
     this.$emit('changeTab', Object.assign({}, this.filterRecord))
   },
   components: {
-    wgDate: wgDate,
     guardiaCivilFormCabecera: require('components/GuardiaCivil/guardiaCivilFormCabecera.vue').default,
     guardiaCivilFormLineas: require('components/GuardiaCivil/guardiaCivilFormLineas.vue').default
   }
