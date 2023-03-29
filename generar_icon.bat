@@ -1,0 +1,1 @@
+icongenie generate -i ./src/assets/LOGO_CAMPING1240.png
