@@ -55,7 +55,7 @@
             <q-td>
               <div style="width: 80px" v-if="rowId === `m_${props.row.id}`">
                 <q-btn flat dense name="edit" icon="edit" size="sm" class="text-grey q-pr-md" @click="editRecord(props.row, props.row.id)"/>
-                <q-btn flat dense name="delete" icon="delete" size="sm" class="text-red q-pr-md" @click="deleteRecord(props.row.id)"/>
+                <q-btn flat dense name="delete" icon="delete" size="sm" class="text-red q-pr-md" @click="deleteRecord(props.row, props.row.id)"/>
               </div>
             </q-td>
           <q-td
@@ -247,7 +247,11 @@ export default {
     editRecord (rowChanges, id) {
       this.addTab(['estanciasForm', 'Estancia-' + rowChanges.id, rowChanges, rowChanges.id])
     },
-    deleteRecord (id) {
+    deleteRecord (rowChanges, id) {
+      if (rowChanges.NroFactura!==null && rowChanges.NroFactura!=='0') {
+        this.$q.dialog({message: 'No se pueden borrar estancias facturadas' })
+        return
+      }
       this.$q.dialog({
         title: 'Confirmar',
         message: '¿ Borrar esta fila ?',

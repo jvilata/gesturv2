@@ -99,8 +99,10 @@
             stack-label
             v-model="recordToSubmit.FechaFactura"
             type="date"
+            :readonly="disableNroFactura"
           />
-        <q-input class="col-xs-6 col-sm-2" outlined label="Número Factura" stack-label v-model="recordToSubmit.NroFactura" />
+        <q-input class="col-xs-6 col-sm-2" outlined label="Número Factura" stack-label v-model="recordToSubmit.NroFactura" 
+            :readonly="disableNroFactura" />
       </div>
   </q-card>
 </template>
@@ -115,7 +117,8 @@ export default {
     return {
       listaClientesFilter: this.listaClientes,
       listaTipoEstanciaFilter: this.listaTipoEstancia,
-      recordToSubmit: {}
+      recordToSubmit: {},
+      disableNroFactura: false
     }
   },
   computed: {
@@ -180,6 +183,9 @@ export default {
     if (this.recordToSubmit.fechaEntrada) this.recordToSubmit.fechaEntrada = this.recordToSubmit.fechaEntrada.substring(0,10)
     if (this.recordToSubmit.fechaSalida) this.recordToSubmit.fechaSalida = this.recordToSubmit.fechaSalida.substring(0,10)
     if (this.recordToSubmit.FechaFactura) this.recordToSubmit.FechaFactura = this.recordToSubmit.FechaFactura.substring(0,10)
+    if (this.recordToSubmit.NroFactura!==null && this.user.login!=='jvilata') { // no dejo modificar campos factura
+      this.disableNroFactura = true
+    }
   },
   watch: {
     recordToSubmit: { // detecta cambios en las propiedades de este objeto (tienen que estar inicializadas en data())
