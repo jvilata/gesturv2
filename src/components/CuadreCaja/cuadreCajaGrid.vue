@@ -17,7 +17,26 @@
       <template v-slot:header="props">
         <!-- CABECERA DE LA TABLA -->
         <q-tr :props="props">
-          <q-th> </q-th>
+          <q-th> 
+            <q-btn icon="more_vert"  class="q-ma-xs" color="primary" dense>
+              <q-menu ref="menu1">
+                <q-list dense>
+                  <q-item
+                    v-for="(opcion, index) in listaOpciones"
+                    :key="index"
+                    clickable
+                    v-close-popup
+                    @click="ejecutarOpcion(opcion)"
+                    >
+                    <q-item-section avatar>
+                      <q-icon :name="opcion.icon" />
+                    </q-item-section>
+                    <q-item-section>{{opcion.title}}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+              </q-btn>
+          </q-th>
           <q-th
             v-for="col in props.cols"
             :key="col.name"
@@ -141,6 +160,9 @@ export default {
     return {
       rowId: '',
       registrosSeleccionados: [],
+      listaOpciones: [
+        { name: 'exportar', title: 'Exportar Excel', icon: 'print', function: 'downloadExcel' }
+      ],
       columns: [
         { name: 'fechaInicial', align: 'left', label: 'Fecha Inicial', field: 'fechaInicial', sortable: true, format: val => date.formatDate(date.extractDate(val, 'YYYY-MM-DD HH:mm:ss'), 'DD-MM-YYYY') },
         { name: 'fechaCierre', align: 'left', label: 'Fecha Final', field: 'fechaCierre', sortable: true, format: val => date.formatDate(date.extractDate(val, 'YYYY-MM-DD HH:mm:ss'), 'DD-MM-YYYY') },
@@ -258,6 +280,39 @@ export default {
     editRecord (rowChanges) {
       Object.assign(this.registroEditado, rowChanges)
       this.mostrarDialog = true
+    },
+    ejecutarOpcion (opcion) {
+      this[opcion.function](this.value)
+      this.$refs.menu1.hide()
+    },
+    downloadExcel () {
+      var paramRecord = {}
+      paramRecord.nompdf = 'CuadreCaja' + date.formatDate(new Date(), 'YYYYMMDDHHmmss') + '.csv'
+      Object.assign(paramRecord, this.value)
+      var formData = new FormData()
+      for (var key in paramRecord) {
+        formData.append(key, paramRecord[key])
+      }
+      var nomFile = paramRecord.nompdf
+      this.$axios.post('caja/bd_caja.php/exportarCajaFilter', formData, { responseType: 'blob' })
+        .then(function (response) {
+          if (window.cordova === undefined) { // desktop
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: response.data.type }))
+            const link = document.createElement('a')
+            link.href = url
+            link.download = nomFile
+            // link.target = '_blank'
+            document.body.appendChild(link)
+            // window.open('', 'view') // abre nueva ventana para que no sustituya a la actual
+            link.click()
+            document.body.removeChild(link)
+          } else { // estamos en un disp movil
+            const blobPdf = response.data // new Blob([response.data], { type: response.data.type })
+            openBlobFile(nomFile, blobPdf, response.data.type)
+          }
+        }).catch(error => {
+          this.$q.dialog({ title: 'Error', message: error })
+        })
     }
   },
   components: {

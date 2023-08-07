@@ -225,6 +225,7 @@ export default {
       console.log('upd', record)
       this.addViajero(record)
         .then(response => {
+          this.addViajero(record)
           this.refresh++
         })
         .catch(error => {
